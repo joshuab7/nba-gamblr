@@ -1,0 +1,6 @@
+{%extends 'base.html'%}
+{%block content%}
+<p>{{games[0].player.first_name}} {{games[0].player.last_name}} has reached your line of {{bet_line}} {{stat_cat}}
+    {{stat_reached}} times!</p>
+<p><a href="/{{games[0].player.id}}/player-stats">Go back to player page</a></p>
+{%endblock%}

@@ -1,0 +1,15 @@
+{%extends 'base.html'%}
+{%block content%}
+<p>Line Checker is a tool you can use to compare a players recent performances to a betting line of your choice!Simply
+    set the line you'd like to compare it to, as well as the stat category and submit. You will then see how many times
+    the player has hit this line this season.</p>
+
+<form method="POST" action="">
+    {{ form.csrf_token }}
+    {{ form.bet_line.label }}
+    {{form.bet_line}}
+    {{ form.stat_cat.label }}
+    {{form.stat_cat}}
+    {{ form.submit }}
+</form>
+{%endblock%}

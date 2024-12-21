@@ -1,0 +1,19 @@
+{%extends 'base.html'%}
+{%block content%}
+<h1>{{ player.first_name }} {{ player.last_name }}</h1>
+<div>
+    <h2>Player Details</h2>
+    <p>Position: {{ player.position }}</p>
+    <p>Height: {{ player.height }}</p>
+    <p>Weight: {{ player.weight }}</p>
+    <p>College: {{ player.college }}</p>
+</div>
+
+<div>
+    <h2>Team Information</h2>
+    <p>Team: {{ player.team.full_name }}</p>
+    <p>Conference: {{ player.team.conference }}</p>
+    <p>Division: {{ player.team.division }}</p>
+</div>
+<p><a href="/{{player.id}}/player-stats">Stats</a></p>
+{%endblock%}

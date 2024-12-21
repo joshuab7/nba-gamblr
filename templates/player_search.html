@@ -1,0 +1,22 @@
+{%extends 'base.html'%}
+{%block content%}
+<table class="table table-striped">
+    <tr>
+        <th>Player Name</th>
+        <th>Position</th>
+        <th>Country</th>
+        <th>Favorite</th>
+    </tr>
+    {%for player in players%}
+    <td><a href="/{{player.id}}/player-stats">{{player.first_name}} {{player.last_name}}</a></td>
+    <td>{{player.position}}</td>
+    <td>{{player.country}}</td>
+    {%if player.id in favorited_ids%}
+    <td><a href="/users/{{player.id}}/delete">&#9733</a></td>
+    {%else%}
+    <td><a href="/users/add_favorite_player/{{player.id}}">&#9734</a></td>
+    {%endif%}
+    </tr>
+    {% endfor %}
+</table>
+{%endblock%}

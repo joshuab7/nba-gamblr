@@ -1,0 +1,61 @@
+{%extends 'base.html'%}
+{%block content%}
+
+<body>
+    <h1>{{ games[0].player.first_name }} {{ games[0].player.last_name }} Game Stats</h1>
+    <table class="table table-striped">
+        <caption>Player Averages(per game this season)</caption>
+        <tr>
+            <th>Points</th>
+            <th>Rebounds</th>
+            <th>Assists</th>
+        </tr>
+        <td>{{ppg}}</td>
+        <td>{{rpg}}</td>
+        <td>{{apg}}</td>
+    </table>
+    <br>
+    <p><a href="/{{games[0].player.id}}/bet-line-check">Check {{games[0].player.first_name}}
+            {{games[0].player.last_name}}'s
+            performances
+            vs a betting line of your choice!</a></p>
+    <br>
+    {%for game in games%}
+    <div class="card">
+        <div class='bg-secondary'>
+            <div class="card-header">
+                <h2>Game Info</h2>
+                <p>Date: {{ game.game.date }}</p>
+            </div>
+        </div>
+        <div class='bg-light'>
+            {% if game.team.id == game.game.home_team_id %}
+            {{ teams[game.game.visitor_team_id] }} @ {{ teams[game.game.home_team_id] }}
+            {% else %}
+            {{ teams[game.game.home_team_id] }} @ {{ teams[game.game.visitor_team_id] }}
+            {% endif %}
+            <p>Score: {{ game.game.home_team_score }} - {{ game.game.visitor_team_score }}</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div bg-primary>
+            <div class="card-header bg-primary">Game Stats</div>
+        </div>
+        <div bg-info>
+            <div class="card-body">
+                <ul>
+                    <li>Points: {{ game.pts }}</li>
+                    <li>Rebounds: {{ game.reb }}</li>
+                    <li>Assists: {{ game.ast }}</li>
+                    <li>Steals: {{ game.stl }}</li>
+                    <li>Blocks: {{ game.blk }}</li>
+                    <li>Minutes Played: {{ game.min }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br>
+    {%endfor%}
+</body>
+{%endblock%}

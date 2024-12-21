@@ -1,0 +1,18 @@
+{%extends 'base.html'%}
+{%block content%}
+<table class="table table-striped">
+    <tr>
+        <th>Conference Rank</th>
+        <th>Team Name</th>
+        <th>Wins</th>
+        <th>Losses</th>
+    </tr>
+    {% for team in standings %}
+    <td>{{ team.conference.rank }}</td>
+    <td>{{ team.team.name }}</td>
+    <td>{{ team.win.total }}</td>
+    <td>{{ team.loss.total }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{%endblock%}

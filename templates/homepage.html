@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+{%if players%}
+<table class="table table-striped">
+    <tr>
+        <th>Player Name</th>
+        <th>Position</th>
+        <th>Country</th>
+        <th>Favorite</th>
+    </tr>
+    {%for player in players%}
+    <tr>
+        <td><a href="/{{player.id}}/player-stats">{{player.name}}</a></td>
+        <td>{{player.position}}</td>
+        <td>{{player.country}}</td>
+        <td><a href="/users/{{player.id}}/delete">&#9733;</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{%else%}
+<p>No favorite players yet. Search for a player to add them to your favorites!</p>
+{%endif%}
+<form method="POST" action="">
+    {{ form.csrf_token }}
+    {{ form.search.label }}
+    {{ form.search }}
+    {{ form.submit }}
+</form>
+
+{% endblock %}
