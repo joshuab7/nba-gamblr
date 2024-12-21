@@ -85,6 +85,7 @@ def do_logout():
 @app.route("/", methods=["GET", "POST"])
 def homepage():
     form = SearchForm()
+    favorite_players = []
     if g.user:
         favorite_players = favorite_player.query.filter_by(user_id=g.user.id).all()
     players_data = []
