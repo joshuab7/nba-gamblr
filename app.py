@@ -25,9 +25,11 @@ from models import (
 )
 from flask_sqlalchemy import SQLAlchemy
 
+
 load_dotenv()
 
 app = Flask(__name__)
+
 
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "fallback-secret-key")
 database_url = os.environ.get("DATABASE_URL")
@@ -58,6 +60,7 @@ url = "https://api-nba-v1.p.rapidapi.com/standings"
 CURR_USER_KEY = "curr_user"
 
 with app.app_context():
+    db.drop_all()
     db.create_all()
 
 
