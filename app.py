@@ -60,13 +60,9 @@ url = "https://api-nba-v1.p.rapidapi.com/standings"
 CURR_USER_KEY = "curr_user"
 
 with app.app_context():
-    db.drop_all()
     db.create_all()
 
 
-##############Ideas###########
-# logged in users can add favorite players(can be displayed in table?)
-# favorite players last 5 [-5:] games will be showed on bar graph compared to other favorite players
 @app.before_request
 def add_user_to_g():
     if CURR_USER_KEY in session:
