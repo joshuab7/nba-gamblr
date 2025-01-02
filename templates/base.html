@@ -9,16 +9,66 @@
     <title>NBA Gamblr</title>
 </head>
 
+<style>
+    .nav-bar {
+        padding: 15px;
+    }
+
+    .nav-link {
+        color: white;
+    }
+
+    .navbar-brand {
+        color: #C8102E;
+    }
+
+    .main-content {
+        padding: 20px;
+        margin: 20px 100px;
+        max-width: 1200px;
+    }
+
+    .loader {
+        border: 16px solid #f3f3f3;
+        border-top: 16px solid #1D428A;
+        border-bottom: 16px solid #C8102E;
+        display: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 10px auto;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
 <body>
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg" style="background-color: #1D428A;">
         <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">NBA Gamblr</a>
+            </div>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="nav nav-pills">
+                <ul class="nav nav-pills nav-justified">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/">Home</a>
+                        <a class="nav-link active" href="/" style='background-color:#C8102E'>Home</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
@@ -44,12 +94,40 @@
                 </ul>
             </div>
         </div>
+
     </nav>
-    {%block content%}
-    {%endblock%}
+    <div class="main-content">
+        <div class="loader" id='loader'>
+        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        {%block content%}
+        {%endblock%}
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const forms = document.querySelectorAll('form');
+            const loader = document.getElementById('loader');
+            forms.forEach(form => {
+                form.addEventListener('submit', function () {
+                    loader.style.display = 'block';
+                });
+            });
+
+            window.addEventListener('load', function () {
+                loader.style.display = 'none';
+            });
+        });
+    </script>
 </body>
 
 </html>

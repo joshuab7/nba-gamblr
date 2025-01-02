@@ -33,7 +33,7 @@ class LineCheckForm(FlaskForm):
 
 class SignUpForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
-    password = PasswordField("Password", validators=[DataRequired()])
+    password = PasswordField("Password", validators=[DataRequired(), Length(min=6)])
     email = EmailField("Email", validators=[DataRequired()])
 
 
@@ -42,15 +42,7 @@ class LoginForm(FlaskForm):
     password = PasswordField("Password", validators=[Length(min=6)])
 
 
-class UserEditForm(FlaskForm):
-    username = StringField("Username")
-    email = StringField("Email", validators=[DataRequired(), Email()])
-    password = PasswordField("Password", validators=[DataRequired(), Length(min=6)])
-
-
 class User(db.Model):
-    """User in the system."""
-
     __tablename__ = "users"
 
     id = db.Column(
@@ -87,11 +79,6 @@ class User(db.Model):
         email,
         password,
     ):
-        """Sign up user.
-
-        Hashes password and adds user to system.
-        """
-
         hashed_pwd = bcrypt.generate_password_hash(password).decode("UTF-8")
 
         user = User(
@@ -105,15 +92,6 @@ class User(db.Model):
 
     @classmethod
     def authenticate(cls, username, password):
-        """Find user with `username` and `password`.
-
-        This is a class method (call it on the class, not an individual user.)
-        It searches for a user whose password hash matches this password
-        and, if it finds such a user, returns that user object.
-
-        If can't find matching user (or if password is wrong), returns False.
-        """
-
         user = cls.query.filter_by(username=username).first()
 
         if user:
@@ -127,7 +105,7 @@ class User(db.Model):
 class favorite_player(db.Model):
     __tablename__ = "favorite_players"
     id = db.Column(db.Integer, primary_key=True)
-
+    player_id = db.Column(db.Integer, nullable=False)
     user_id = db.Column(
         db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )

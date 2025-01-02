@@ -1,5 +1,6 @@
 {%extends 'base.html'%}
 {%block content%}
+{%if players%}
 <table class="table table-striped">
     <tr>
         <th>Player Name</th>
@@ -11,12 +12,16 @@
     <td><a href="/{{player.id}}/player-stats">{{player.first_name}} {{player.last_name}}</a></td>
     <td>{{player.position}}</td>
     <td>{{player.country}}</td>
-    {%if player.id in favorited_ids%}
-    <td><a href="/users/{{player.id}}/delete">&#9733</a></td>
-    {%else%}
     <td><a href="/users/add_favorite_player/{{player.id}}">&#9734</a></td>
-    {%endif%}
     </tr>
     {% endfor %}
+    {%else%}
+    <p class="text-center">Sorry, No players with that name came up. If you searched using full name, please try again
+        using only first or
+        last name.</p>
+    <div class="d-grid">
+        <a class='btn btn-secondary btn-block' href='/'>Try again?</a>
+    </div>
+    {%endif%}
 </table>
 {%endblock%}

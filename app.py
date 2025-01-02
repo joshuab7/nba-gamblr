@@ -91,7 +91,7 @@ def homepage():
     players_data = []
     for player in favorite_players:
         try:
-            player_info = api.nba.players.get(player.id)
+            player_info = api.nba.players.get(player.player_id)
             player_dict = player_info.model_dump()
             player_data = player_dict["data"]
             player_info = {
@@ -102,7 +102,7 @@ def homepage():
             }
             players_data.append(player_info)
         except Exception as e:
-            print(f"Error fetching player {player.id}: {str(e)}")
+            print(f"Error fetching player {player.player_id}: {str(e)}")
 
     if form.validate_on_submit():
         name = form.search.data
@@ -159,17 +159,20 @@ def division_standings(division):
 @app.route("/active-player/<name>")
 def player_search(name):
     name_search = api.nba.players.list_active(search=name)
+    favorited_ids = []
     if g.user:
         favorite_players = favorite_player.query.filter_by(user_id=g.user.id).all()
         player_dict = name_search.model_dump()
         player_data = player_dict["data"]
-    favorited_ids = []
-    favorited_ids = [fav.id for fav in favorite_players]
-    print(f"player data: {player_dict}")
-    player_data = player_dict["data"]
-    return render_template(
-        "/player_search.html", players=player_data, favorited_ids=favorited_ids
-    )
+        favorited_ids = [fav.id for fav in favorite_players]
+        player_data = player_dict["data"]
+        return render_template(
+            "/player_search.html", players=player_data, favorited_ids=favorited_ids
+        )
+    else:
+        player_dict = name_search.model_dump()
+        player_data = player_dict["data"]
+        return render_template("/player_search.html", players=player_data)
 
 
 @app.route("/<int:player_id>/player-stats")
@@ -192,7 +195,9 @@ def player_stats(player_id):
             apg=apg,
         )
     except Exception as e:
-        return jsonify({"error": str(e)})
+        print(f"API Error: {str(e)}")
+        flash("Error loading player stats.", "danger")
+        return redirect("/")
 
 
 @app.route("/<int:player_id>/bet-line-check", methods=["GET", "POST"])
@@ -238,13 +243,27 @@ def check_bet_line(player_id):
 @app.route("/users/add_favorite_player/<int:player_id>", methods=["GET", "POST"])
 def favorite_players(player_id):
     if not g.user:
-        flash("Unauthorized user,Please log in.", "danger")
+        flash(
+            "You are not logged in.Please log in or create an account to get started!",
+            "danger",
+        )
+        return redirect("/login")
+    try:
+        existing_favorite = favorite_player.query.filter_by(
+            user_id=g.user.id, player_id=player_id
+        ).first()
+        if existing_favorite:
+            flash("This Player is already favorited!", "warning")
+            return redirect("/")
+        else:
+            new_player = favorite_player(player_id=player_id, user_id=g.user.id)
+        db.session.add(new_player)
+        db.session.commit()
         return redirect("/")
-    else:
-        new_player = favorite_player(id=player_id, user_id=g.user.id)
-    db.session.add(new_player)
-    db.session.commit()
-    return redirect(request.referrer)
+    except Exception as e:
+        db.session.rollback()
+        print(f"Database Error: {str(e)}")
+        flash("Error adding player to favorites.", "danger")
 
 
 @app.route("/users/<int:player_id>/delete", methods=["GET", "POST"])
@@ -253,28 +272,15 @@ def remove_favorite(player_id):
         flash("Access unauthorized.", "danger")
         return redirect("/")
     else:
-        favorite_players = favorite_player.query.filter_by(user_id=g.user.id).all()
-        for player in favorite_players:
-            if player_id == player.id:
-                player = player
-                db.session.delete(player)
-                db.session.commit()
+        existing_favorite = favorite_player.query.filter_by(
+            user_id=g.user.id, player_id=player_id
+        ).first()
+        if existing_favorite:
+            db.session.delete(existing_favorite)
+            db.session.commit()
+            return redirect("/")
 
     return redirect("/")
-
-
-@app.route("/users/delete", methods=["POST"])
-def delete_user():
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
-
-    do_logout()
-
-    db.session.delete(g.user)
-    db.session.commit()
-
-    return redirect("/signup")
 
 
 @app.route("/logout")
